@@ -2,4 +2,66 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lantu.sys.mapper.RoleMapper">
 
+    <resultMap id="roleResultMap" type="com.lantu.sys.entity.Role">
+        <result column="role_name" property="roleName"></result>
+        <result column="role_desc" property="roleDesc"></result>
+        <result column="role_id" property="roleId"></result>
+    </resultMap>
+    <resultMap id="userTotalCount" type="Integer"></resultMap>
+
+    <select id="selectList" resultMap="roleResultMap,userTotalCount">
+        select sql_calc_found_rows * from x_role
+        <where>
+            <if test="roleId != null and roleId != ''">
+                role_id=#{roleId}
+            </if>
+            <if test="roleName != null and roleName != ''">
+                and role_name like #{roleName}
+            </if>
+            <if test="roleDesc != null and roleDesc != ''">
+                and role_desc like #{roleDesc}
+            </if>
+        </where>
+        order by role_id
+--         Mybatis中limit语句无法实现计算属性，使用bind标签计算
+        <bind name="offsetValue" value="pageSize * (pageNo-1)"/>
+        limit #{pageSize} offset #{offsetValue};
+        select FOUND_ROWS() as userTotalCount;
+    </select>
+
+    <insert id="addRole">
+        insert into x_role(role_name,role_desc)
+        values (#{roleName},#{roleDesc})
+    </insert>
+
+    <select id="getRoleListById" resultMap="roleResultMap">
+        select * from x_role
+        <where>
+            <if test="roleId != null and roleId != ''">
+                role_id=#{roleId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateRole">
+        update x_role
+        <set>
+            <if test="roleName != null and roleName != ''">
+                role_name=#{roleName},
+            </if>
+            <if test="roleDesc != null and roleDesc != ''">
+                role_desc=#{roleDesc}
+            </if>
+        </set>
+        <where>
+            role_id=#{roleId}
+        </where>
+    </update>
+
+    <delete id="deleteRoleByid">
+        delete from x_role
+        <where>
+            role_id=#{roleId}
+        </where>
+    </delete>
 </mapper>
