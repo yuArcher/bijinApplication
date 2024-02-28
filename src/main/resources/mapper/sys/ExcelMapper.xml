@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lantu.sys.mapper.ExcelMapper">
+
+    <resultMap id="getExcelListMap" type="com.lantu.sys.entity.ExcelEntity"></resultMap>
+    <resultMap id="totalCount" type="Integer"></resultMap>
+
+    <insert id="insertDate" parameterType="com.lantu.sys.entity.ExcelEntity">
+        insert into exceldata (id,code,shipname,shipnumber,oceanfield,stand,xcoordinate,ycoordinate,address,depth,xinlength,ataddress,status,mark)
+            values (#{id},#{code},#{shipname},#{shipnumber},#{oceanfield},#{stand},#{xcoordinate},#{ycoordinate},#{address},#{depth},#{xinlength},#{ataddress},#{status},#{mark})
+    </insert>
+    <select id="getExcelList" parameterType="list" resultType="com.lantu.sys.entity.ExcelEntity">
+        select * from exceldata
+            <where>
+                1=1
+                <if test="shipname != null and shipname != ''">
+                    and shipname like #{shipname}
+                </if>
+                <if test="oceanfield != null and oceanfield != ''">
+                    and oceanfield like #{oceanfield}
+                </if>
+                <if test="code != null and code != ''">
+                    and code like #{code}
+                </if>
+            </where>
+            order by id
+<!--            <bind name="offset" value="pageSize*(pageNo-1)"></bind>-->
+<!--            limit #{pageSize} offset #{offset};-->
+<!--            select FOUND_ROWS() as totalCount;-->
+    </select>
+</mapper>
